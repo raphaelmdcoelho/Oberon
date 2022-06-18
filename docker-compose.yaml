@@ -1,0 +1,42 @@
+services:
+  server:
+    build: ./server/
+    volumes:
+      - /home/rmdcoelho/Repositories/Ark/server/html/:/usr/share/nginx/html/
+    ports:
+      - "80:80"
+    networks:
+      appnet:
+        ipv4_address: 172.19.0.8
+  apiopen:
+    build: ./src/appopen
+    ports:
+      - "3001:3001"
+    networks:
+      appnet:
+        ipv4_address: 172.19.0.9
+  apiclosed:
+    build: ./src/appclosed
+    ports:
+      - "3002:3002"
+    networks:
+      appnet:
+        ipv4_address: 172.19.0.10
+  db:
+    image: postgres:10.5
+    restart: always
+    environment:
+      - POSTGRES_USER=postres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - "5438:5432"
+    networks:
+      appnet:
+        ipv4_address: 172.19.0.7
+
+networks:
+  appnet:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.19.0.0/16
